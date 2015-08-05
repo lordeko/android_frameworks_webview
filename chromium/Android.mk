@@ -31,17 +31,29 @@ LOCAL_CERTIFICATE   := PRESIGNED
 LOCAL_SRC_FILES     := prebuilt/$(TARGET_ARCH)/webview.apk
 
 ifeq ($(TARGET_IS_64_BIT),true)
-     TARGET_LIB_DIR := lib64
+     # Primary arch
+     $(shell mkdir -p $(TARGET_OUT_SHARED_LIBRARIES))
+     $(shell cp $(LOCAL_PATH)/prebuilt/$(TARGET_ARCH)/$(TARGET_CPU_ABI)/libwebviewchromium.so $(TARGET_OUT_SHARED_LIBRARIES))
+
+     $(shell mkdir -p $(TARGET_OUT_APPS)/webview/lib/$(TARGET_ARCH))
+     $(shell ln -sf ../../../../lib64/libwebviewchromium.so $(TARGET_OUT_APPS)/webview/lib/$(TARGET_ARCH)/libwebviewchromium.so)
+     ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_APPS)/webview/lib/$(TARGET_ARCH)/libwebviewchromium.so
+
+     # Secondary arch
+     $(shell mkdir -p $($(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SHARED_LIBRARIES))
+     $(shell cp $(LOCAL_PATH)/prebuilt/$(TARGET_ARCH)/$(TARGET_2ND_CPU_ABI)/libwebviewchromium.so $($(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SHARED_LIBRARIES))
+
+     $(shell mkdir -p $(TARGET_OUT_APPS)/webview/lib/$(TARGET_2ND_ARCH))
+     $(shell ln -sf ../../../../lib/libwebviewchromium.so $(TARGET_OUT_APPS)/webview/lib/$(TARGET_2ND_ARCH)/libwebviewchromium.so)
+     ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_APPS)/webview/lib/$(TARGET_2ND_ARCH)/libwebviewchromium.so
 else
-     TARGET_LIB_DIR := lib
+     $(shell mkdir -p $(TARGET_OUT_SHARED_LIBRARIES))
+     $(shell cp $(LOCAL_PATH)/prebuilt/$(TARGET_ARCH)/libwebviewchromium.so $(TARGET_OUT_SHARED_LIBRARIES))
+
+     $(shell mkdir -p $(TARGET_OUT_APPS)/webview/lib/$(TARGET_ARCH))
+     $(shell ln -sf ../../../../lib/libwebviewchromium.so $(TARGET_OUT_APPS)/webview/lib/$(TARGET_ARCH)/libwebviewchromium.so)
+     ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_APPS)/webview/lib/$(TARGET_ARCH)/libwebviewchromium.so
 endif
-
-$(shell mkdir -p $(TARGET_OUT_SHARED_LIBRARIES))
-$(shell cp $(LOCAL_PATH)/prebuilt/$(TARGET_ARCH)/libwebviewchromium.so $(TARGET_OUT_SHARED_LIBRARIES))
-
-$(shell mkdir -p $(TARGET_OUT_APPS)/webview/lib/$(TARGET_ARCH))
-$(shell ln -sf ../../../../$(TARGET_LIB_DIR)/libwebviewchromium.so $(TARGET_OUT_APPS)/webview/lib/$(TARGET_ARCH)/libwebviewchromium.so)
-ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_APPS)/webview/lib/$(TARGET_ARCH)/libwebviewchromium.so
 
 include $(BUILD_PREBUILT)
 

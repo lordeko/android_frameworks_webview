@@ -21,7 +21,7 @@ if [[ $NEWWEBVIEWVERSION != $WEBVIEWVERSION ]]; then
     echo "Updating current WebView $WEBVIEWVERSION to $NEWWEBVIEWVERSION ..."
     echo $NEWWEBVIEWVERSION > version
     rm -rf libwebviewchromium.so
-    mv $WEBVIEWDIR/lib/arm64-v8a/* .
+    mv $WEBVIEWDIR/lib/* .
     rm webview.apk
     rm -rf $WEBVIEWDIR
     7z x -otmp "$@" 1>/dev/null
